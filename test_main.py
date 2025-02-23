@@ -4,6 +4,7 @@ from unittest.mock import patch
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.pool import StaticPool
 
 os.environ["TEST"] = '1'
 from main import app, get_db, Base
@@ -12,9 +13,8 @@ from main import app, get_db, Base
 # Фикстура для настройки тестовой БД
 @pytest.fixture()
 def test_session():
-    TEST_DB_NAME = "test_weather.db"
-    TEST_DATABASE_URL = f"sqlite:///./{TEST_DB_NAME}"
-    engine = create_engine(TEST_DATABASE_URL, connect_args={"check_same_thread": False})
+    TEST_DATABASE_URL = "sqlite:///:memory:"
+    engine = create_engine(TEST_DATABASE_URL, connect_args={"check_same_thread": False}, poolclass=StaticPool)
     Base.metadata.create_all(bind=engine)
     TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     yield TestingSessionLocal

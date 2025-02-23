@@ -11,8 +11,7 @@ from sqlalchemy.future import select
 
 
 # Настройка базы данных SQLite
-DB_NAME = "test_weather.db" if os.getenv("TEST") else "weather.db"
-DATABASE_URL = f"sqlite:///./{DB_NAME}"
+DATABASE_URL = "sqlite:///:memory:" if os.getenv("TEST") else "sqlite:///./weather.db"
 
 # Настройка SQLAlchemy
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
